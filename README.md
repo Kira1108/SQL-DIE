@@ -6,6 +6,10 @@ Make sql engineers die
 
 ## langchain怎么理解SQL自动化的
 
+不足：这两个问题都要问OPENAI的，只有表名信息不足以体现表的关联，字段等信息
+
+
+**如何写SQL**
 ```python
 """
 Given an input question, first create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer. Unless the user specifies in his question a specific number of examples he wishes to obtain, always limit your query to at most {top_k} results. You can order the results by a relevant column to return the most interesting examples in the database.
@@ -44,3 +48,15 @@ Question: {query}
 Table Names: {table_names}
 Relevant Table Names:
 ```
+
+**如何找到表**
+```
+给定以下输入问题和潜在表列表，输出可能需要回答此问题的表名称的逗号分隔列表。
+问题：{query}
+表名：{table_names}
+相关表名：
+```
+
+
+
+
