@@ -6,7 +6,6 @@ Make sql engineers die
 
 ## langchain怎么理解SQL自动化的
 
-不足：这两个问题都要问OPENAI的，只有表名信息不足以体现表的关联，字段等信息
 
 
 **如何写SQL**
@@ -174,6 +173,66 @@ TrackId	Name	AlbumId	MediaTypeId	GenreId	Composer	Milliseconds	Bytes	UnitPrice
 2	Balls to the Wall	2	2	1	None	342562	5510424	0.99
 */
 ```
+
+
+
+langchain的Database模块，动态构建了数据库建表语句查询，列信息查询，以及示例行查询。   
+基本可以说是SQL自动化的典范了。  
+```python
+tables = []
+        for table in meta_tables:
+            if self._custom_table_info and table.name in self._custom_table_info:
+                tables.append(self._custom_table_info[table.name])
+                continue
+
+            # add create table command
+            create_table = str(CreateTable(table).compile(self._engine))
+
+            if self._sample_rows_in_table_info:
+                # build the select command
+                command = select(table).limit(self._sample_rows_in_table_info)
+
+                # save the columns in string format
+                columns_str = "\t".join([col.name for col in table.columns])
+
+                try:
+                    # get the sample rows
+                    with self._engine.connect() as connection:
+                        sample_rows = connection.execute(command)
+                        # shorten values in the sample rows
+                        sample_rows = list(
+                            map(lambda ls: [str(i)[:100] for i in ls], sample_rows)
+                        )
+
+                    # save the sample rows in string format
+                    sample_rows_str = "\n".join(["\t".join(row) for row in sample_rows])
+
+                # in some dialects when there are no rows in the table a
+                # 'ProgrammingError' is returned
+                except ProgrammingError:
+                    sample_rows_str = ""
+
+                table_info = (
+                    f"{create_table.rstrip()}\n"
+                    f"/*\n"
+                    f"{self._sample_rows_in_table_info} rows from {table.name} table:\n"
+                    f"{columns_str}\n"
+                    f"{sample_rows_str}\n"
+                    f"*/"
+                )
+
+                # build final info for table
+                tables.append(table_info)
+
+            else:
+                tables.append(create_table)
+
+        final_str = "\n\n".join(tables)
+        return final_str
+```
+
+
+
 
 
 
