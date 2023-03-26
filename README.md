@@ -38,3 +38,9 @@ SQL结果：“SQL查询的结果”
 注：在翻译时，{dialect}和{top_k}需要替换为实际方言和数字。
 ```
 
+```python
+Given the below input question and list of potential tables, output a comma separated list of the table names that may be necessary to answer this question.
+Question: {query}
+Table Names: {table_names}
+Relevant Table Names:
+```
