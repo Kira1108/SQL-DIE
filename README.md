@@ -140,17 +140,11 @@ class SQLDatabaseSequentialChain(Chain, BaseModel):
 ```
 
 
+## `Chain = Chain(llm, prompts)`
 
+一系列的prompt和一个llm组成了一个Chain。 
 
-
-
-
-
-
-
-
-
-
+![72DDBC16-C3BE-4FCD-9A8A-41775CBE551E](https://user-images.githubusercontent.com/17697154/227764738-9be1633c-096b-45a2-b1bb-ccc9f4c6030f.png)
 
 
 
