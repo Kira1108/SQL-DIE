@@ -234,7 +234,32 @@ tables = []
         return final_str
 ```
 
+## Flan T5 Vs Codex
 
+FlanT5真是看不懂SQL的    
+
+**Codex**
+```
+/*
+q: what is the purpose of the following table, assuming this is a
+mobile game company database.
+
+a: this table is used to store the user information. the data
+is used to analyze the user behavior.
+
+q: what is the granularity of the table (what uniquely defins a row)
+a: user_id
+*/
+CREATE TABLE aoz.dim_user_info (
+    user_id bigint ENCODE raw distkey,
+    user_name character varying(100) ENCODE lzo,
+    city_level integer ENCODE az64,
+```
+
+**FlanT5**
+```
+create table user_info(user_id.....)..........................
+```
 
 
 
