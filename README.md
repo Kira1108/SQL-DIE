@@ -57,11 +57,11 @@ Relevant Table Names:
 相关表名：
 ```
 
-**如何执行**
-`decider_chian` = 找表
-`sql_chain` = 生成 + 执行
+**如何执行**    
+`decider_chian` = 找表    
+`sql_chain` = 生成 + 执行    
 
-decider_chain -> sql_chain.
+decider_chain -> sql_chain.    
 
 ```python
 class SQLDatabaseSequentialChain(Chain, BaseModel):
