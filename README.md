@@ -3,7 +3,7 @@ Make sql engineers die
 
 ![image](https://user-images.githubusercontent.com/17697154/227728953-72a29d0d-31a3-4ef9-8314-ddc3bca53908.png)    
 
-
+**只要你把数据库表设计的特别傻逼, 那谁谁都替代不了你, 你是永恒的**      
 还有什么空间：向量搜索， 表推荐， 个性化吧也就。    
 
 
