@@ -42,6 +42,7 @@ SQL结果：“SQL查询的结果”
 注：在翻译时，{dialect}和{top_k}需要替换为实际方言和数字。
 ```
 
+**如何找到表**
 ```python
 Given the below input question and list of potential tables, output a comma separated list of the table names that may be necessary to answer this question.
 Question: {query}
@@ -49,13 +50,113 @@ Table Names: {table_names}
 Relevant Table Names:
 ```
 
-**如何找到表**
 ```
 给定以下输入问题和潜在表列表，输出可能需要回答此问题的表名称的逗号分隔列表。
 问题：{query}
 表名：{table_names}
 相关表名：
 ```
+
+**如何执行**
+`decider_chian` = 找表
+`sql_chain` = 生成 + 执行
+
+decider_chain -> sql_chain.
+
+```python
+class SQLDatabaseSequentialChain(Chain, BaseModel):
+    """Chain for querying SQL database that is a sequential chain.
+    The chain is as follows:
+    1. Based on the query, determine which tables to use.
+    2. Based on those tables, call the normal SQL database chain.
+    This is useful in cases where the number of tables in the database is large.
+    """
+
+    return_intermediate_steps: bool = False
+
+    @classmethod
+    def from_llm(
+        cls,
+        llm: BaseLanguageModel,
+        database: SQLDatabase,
+        query_prompt: BasePromptTemplate = PROMPT,
+        decider_prompt: BasePromptTemplate = DECIDER_PROMPT,
+        **kwargs: Any,
+    ) -> SQLDatabaseSequentialChain:
+        """Load the necessary chains."""
+        sql_chain = SQLDatabaseChain(
+            llm=llm, database=database, prompt=query_prompt, **kwargs
+        )
+        decider_chain = LLMChain(
+            llm=llm, prompt=decider_prompt, output_key="table_names"
+        )
+        return cls(sql_chain=sql_chain, decider_chain=decider_chain, **kwargs)
+
+    decider_chain: LLMChain
+    sql_chain: SQLDatabaseChain
+    input_key: str = "query"  #: :meta private:
+    output_key: str = "result"  #: :meta private:
+
+    @property
+    def input_keys(self) -> List[str]:
+        """Return the singular input key.
+        :meta private:
+        """
+        return [self.input_key]
+
+    @property
+    def output_keys(self) -> List[str]:
+        """Return the singular output key.
+        :meta private:
+        """
+        if not self.return_intermediate_steps:
+            return [self.output_key]
+        else:
+            return [self.output_key, "intermediate_steps"]
+
+    def _call(self, inputs: Dict[str, str]) -> Dict[str, str]:
+        _table_names = self.sql_chain.database.get_table_names()
+        table_names = ", ".join(_table_names)
+        llm_inputs = {
+            "query": inputs[self.input_key],
+            "table_names": table_names,
+        }
+        table_names_to_use = self.decider_chain.predict_and_parse(**llm_inputs)
+        self.callback_manager.on_text(
+            "Table names to use:", end="\n", verbose=self.verbose
+        )
+        self.callback_manager.on_text(
+            str(table_names_to_use), color="yellow", verbose=self.verbose
+        )
+        new_inputs = {
+            self.sql_chain.input_key: inputs[self.input_key],
+            "table_names_to_use": table_names_to_use,
+        }
+        return self.sql_chain(new_inputs, return_only_outputs=True)
+
+    @property
+    def _chain_type(self) -> str:
+        return "sql_database_sequential_chain"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
