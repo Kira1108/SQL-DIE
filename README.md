@@ -147,7 +147,33 @@ class SQLDatabaseSequentialChain(Chain, BaseModel):
 ![72DDBC16-C3BE-4FCD-9A8A-41775CBE551E](https://user-images.githubusercontent.com/17697154/227764738-9be1633c-096b-45a2-b1bb-ccc9f4c6030f.png)
 
 
+## Database Info
 
+Langchain在获取表元信息的时候，还附带了两行数据。     
+这个真的牛逼啊， 利用好元数据，能干翻一切了。  
+```
+CREATE TABLE "Track" (
+	"TrackId" INTEGER NOT NULL, 
+	"Name" NVARCHAR(200) NOT NULL, 
+	"AlbumId" INTEGER, 
+	"MediaTypeId" INTEGER NOT NULL, 
+	"GenreId" INTEGER, 
+	"Composer" NVARCHAR(220), 
+	"Milliseconds" INTEGER NOT NULL, 
+	"Bytes" INTEGER, 
+	"UnitPrice" NUMERIC(10, 2) NOT NULL, 
+	PRIMARY KEY ("TrackId"), 
+	FOREIGN KEY("MediaTypeId") REFERENCES "MediaType" ("MediaTypeId"), 
+	FOREIGN KEY("GenreId") REFERENCES "Genre" ("GenreId"), 
+	FOREIGN KEY("AlbumId") REFERENCES "Album" ("AlbumId")
+)
+/*
+2 rows from Track table:
+TrackId	Name	AlbumId	MediaTypeId	GenreId	Composer	Milliseconds	Bytes	UnitPrice
+1	For Those About To Rock (We Salute You)	1	1	1	Angus Young, Malcolm Young, Brian Johnson	343719	11170334	0.99
+2	Balls to the Wall	2	2	1	None	342562	5510424	0.99
+*/
+```
 
 
 
