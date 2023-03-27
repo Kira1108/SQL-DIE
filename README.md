@@ -287,6 +287,8 @@ load_date: This column records the date on which the data was loaded into the ta
 The table's distribution style is set to KEY, and the sort key is set to user_id. This means that the table is distributed based on the user_id column's value, and the data within each node is sorted based on the user_id column's value for efficient querying. Overall, the "app_diamond_report" table can be used to analyze user behavior and consumption patterns within the application, enabling businesses to make informed decisions on their product strategy and pricing.
 ```
 
+## Retrieval API
+![image](https://user-images.githubusercontent.com/17697154/227825609-bb3bd745-925d-46c9-8c54-1d190dd46ed4.png)
 
 
 
